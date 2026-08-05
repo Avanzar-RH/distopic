@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forge Dystopia — Panel Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Oswald:wght@500;700&display=swap');
+        
+        body { font-family: 'Chakra Petch', sans-serif; background-color: #090a0f; color: #e2e8f0; }
+        .font-title { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
+        .font-mono-custom { font-family: 'Courier Prime', monospace; }
+
+        .a4-sheet {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 10mm;
+            background-color: #ffffff !important;
+            color: #111827 !important;
+            box-sizing: border-box;
+            margin: 0 auto 20px auto;
+            border: 1px solid #d1d5db;
+        }
+        .card-tarot { width: 120mm; height: 75mm; box-sizing: border-box; position: relative; }
+        .card-mini { width: 63mm; height: 41mm; box-sizing: border-box; position: relative; }
+        .crop-marks { outline: 1px dashed #6b7280; outline-offset: -1px; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .a4-sheet { width: 210mm !important; height: 297mm !important; margin: 0 !important; border: none !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Principal -->
+    <header class="border-b border-zinc-800 bg-zinc-950 px-6 py-4 flex justify-between items-center no-print sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-red-600/20 text-red-500 rounded-lg border border-red-500/30">
+                <i data-lucide="skull" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold font-title uppercase text-zinc-100">Forge Dystopia — Panel Profesional</h1>
+                <p class="text-xs text-zinc-400">Generador de Escenarios, Canvas de Dibujo & Mazo A4</p>
+            </div>
+        </div>
+        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition-all shadow-md flex items-center gap-2">
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Guardar PDF
+        </button>
+    </header>
+
+    <!-- Workspace Principal -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- Controles (Izquierda) -->
+        <div class="w-full lg:w-5/12 border-r border-zinc-800 bg-zinc-900/90 p-5 overflow-y-auto max-h-[calc(100vh-73px)] no-print space-y-4">
+            
+            <!-- Generador de Escenario & Narrativa -->
+            <div class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-3">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Generador Narrativo & Dilemas
+                </h2>
+                <div>
+                    <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1">Título / Temática del Escenario</label>
+                    <input type="text" id="inputTopic" value="El Eclipse de Ceniza" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-red-500">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="generarNarrativaYCartas()" class="bg-red-950 hover:bg-red-900 text-red-300 border border-red-700/60 text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all">
+                        <i data-lucide="wand-2" class="w-3.5 h-3.5"></i> Redactar Lore y Dilemas
+                    </button>
+                    <button onclick="limpiarCanvas()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-600 text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-all">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Limpiar Lienzo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Activo para Dibujar el Arte -->
+            <div class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-3">
+                <h3 class="text-xs font-bold uppercase text-zinc-300 flex items-center justify-between">
+                    <span>Canvas Activo (Dibuja el Arte)</span>
+                    <span class="text-[9px] text-zinc-500">Pinta con el mouse o la mano</span>
+                </h3>
+                <div class="border border-zinc-700 rounded-lg overflow-hidden bg-black flex justify-center">
+                    <canvas id="artCanvas" width="320" height="180" class="cursor-crosshair w-full"></canvas>
+                </div>
+            </div>
+
+            <!-- Gestor de Cartas -->
+            <div class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-3">
+                <h3 class="text-xs font-bold uppercase text-zinc-300">Añadir Carta al Mazo (Máx 8)</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="cardType" class="bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-100">
+                        <option value="red">Crisis (Roja)</option>
+                        <option value="black">Dilema (Negra)</option>
+                        <option value="generic">Pregunta (Genérica)</option>
+                    </select>
+                    <input type="text" id="cardTitle" placeholder="Título corto" class="bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-100">
+                </div>
+                <textarea id="cardText" placeholder="Texto de la situación..." rows="2" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-100"></textarea>
+                <button onclick="agregarCarta()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold py-2 rounded-lg border border-zinc-600">
+                    Agregar Tarjeta
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <h3 class="text-xs font-bold uppercase text-zinc-400">Cartas Activas (<span id="cardCount">0</span>/8)</h3>
+                <div id="cardListContainer" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+
+        <!-- Vista Previa A4 (Derecha) -->
+        <div class="w-full lg:w-7/12 p-6 overflow-y-auto max-h-[calc(100vh-73px)] bg-zinc-950 flex flex-col items-center">
+            
+            <div class="a4-sheet shadow-2xl rounded-sm flex flex-col justify-between">
+                <div>
+                    <div class="border-b border-zinc-300 pb-1 mb-3 flex justify-between items-center text-[10px] font-bold uppercase text-zinc-700">
+                        <span>HOJA 1: FRONTALES — ESCENARIO & MAZO MINI USA</span>
+                        <span>GITHUB PRO</span>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <div class="card-tarot crop-marks bg-zinc-900 rounded-md p-3 flex flex-col justify-between text-white relative overflow-hidden shadow">
+                            <div id="scenarioArtBox" class="absolute inset-0 flex items-center justify-center"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                            <div class="relative z-10 text-right"><span class="bg-red-600 text-white text-[7px] font-black uppercase px-1.5 py-0.5 rounded">Escenario</span></div>
+                            <div class="relative z-10"><h2 id="viewTitleFront" class="text-xl font-extrabold font-title uppercase">El Eclipse de Ceniza</h2></div>
+                        </div>
+
+                        <div class="card-tarot crop-marks bg-red-950 border border-red-600 rounded-md p-3 flex flex-col justify-between text-white shadow">
+                            <div>
+                                <h2 id="viewTitleBack" class="text-sm font-bold font-title uppercase text-red-300 border-b border-white/20 pb-1 mb-1">El Eclipse de Ceniza</h2>
+                                <p id="viewLore" class="font-mono-custom text-[8px] text-zinc-200">Tras la erupción...</p>
+                            </div>
+                            <div class="bg-black/50 p-1.5 rounded text-[8px]">
+                                <div><strong>Lugar:</strong> <span id="viewLocation">Silos de Hormigón</span></div>
+                                <div><strong>Población:</strong> <span id="viewPop">320 personas</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="border-b border-zinc-300 pb-1 mb-2 text-[10px] font-bold uppercase text-zinc-700">Mazo Mini USA (3x3)</div>
+                    <div id="miniGrid" class="grid grid-cols-3 gap-2 justify-items-center"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let state = {
+            title: "El Eclipse de Ceniza",
+            location: "Silos de Hormigón",
+            population: "320 personas",
+            lore: "Tras la erupción en cadena de la cordillera central, el sol quedó totalmente bloqueado por una capa tóxica de ceniza.",
+            cards: [
+                { type: 'red', tag: 'CRISIS', title: 'Tormenta Ácida', text: 'Una nube corrosiva desciende. ¿Quiénes ceden sus filtros de aire?' },
+                { type: 'black', tag: 'DILEMA', title: 'Raciones Bajo Cero', text: 'Quedan víveres para 3 días. ¿Se prioriza a los niños o técnicos?' }
+            ]
+        };
+
+        const canvas = document.getElementById('artCanvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+
+        function startPosition(e) { painting = true; draw(e); }
+        function endPosition() { painting = false; ctx.beginPath(); }
+        function draw(e) {
+            if(!painting) return;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#ef4444';
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            actualizarArteCanvas();
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw);
+
+        function limpiarCanvas() {
+            ctx.fillStyle = '#111827';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            actualizarArteCanvas();
+        }
+
+        function actualizarArteCanvas() {
+            const dataURL = canvas.toDataURL();
+            document.getElementById('scenarioArtBox').innerHTML = `<img src="${dataURL}" class="w-full h-full object-cover opacity-90">`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            limpiarCanvas();
+            renderAll();
+        });
+
+        function generarNarrativaYCartas() {
+            const raw = document.getElementById('inputTopic').value.trim() || "Colapso Global";
+            state.title = raw;
+            state.location = "Sector Aislado";
+            state.population = "210 supervivientes";
+            state.lore = `Las condiciones críticas en ${raw} amenazan con destruir el búnker principal en cuestión de horas.`;
+            
+            state.cards = [
+                { type: 'red', tag: 'CRISIS ' + raw.toUpperCase(), title: 'Falla en ' + raw, text: `Los sistemas de ${raw} sufren daños letales. ¿Quiénes asumen la reparación?` },
+                { type: 'black', tag: 'DILEMA MORAL', title: 'Protocolo de Mando', text: `Ante la escasez en ${raw}, se requiere racionamiento absoluto.` }
+            ];
+            renderAll();
+        }
+
+        function agregarCarta() {
+            if(state.cards.length >= 8) return alert('Máximo 8 cartas permitidas.');
+            const type = document.getElementById('cardType').value;
+            const title = document.getElementById('cardTitle').value || 'Nuevo Dilema';
+            const text = document.getElementById('cardText').value || 'Descripción...';
+            const tag = type === 'red' ? 'CRISIS' : type === 'black' ? 'DILEMA' : 'PREGUNTA';
+
+            state.cards.push({ type, tag, title, text });
+            document.getElementById('cardTitle').value = '';
+            document.getElementById('cardText').value = '';
+            renderAll();
+        }
+
+        function eliminarCarta(idx) {
+            state.cards.splice(idx, 1);
+            renderAll();
+        }
+
+        function renderAll() {
+            document.getElementById('viewTitleFront').innerText = state.title;
+            document.getElementById('viewTitleBack').innerText = state.title;
+            document.getElementById('viewLore').innerText = state.lore;
+            document.getElementById('viewLocation').innerText = state.location;
+            document.getElementById('viewPop').innerText = state.population;
+            document.getElementById('cardCount').innerText = state.cards.length;
+
+            const listEl = document.getElementById('cardListContainer');
+            listEl.innerHTML = '';
+            state.cards.forEach((c, i) => {
+                listEl.innerHTML += `<div class="flex justify-between items-center bg-zinc-900 p-2 rounded text-xs border border-zinc-800">
+                    <span class="truncate"><b>${i+1}.</b> ${c.title}</span>
+                    <button onclick="eliminarCarta(${i})" class="text-red-400 hover:text-red-300">Eliminar</button>
+                </div>`;
+            });
+
+            const grid = document.getElementById('miniGrid');
+            grid.innerHTML = '';
+            let totalCards = [...state.cards];
+            while(totalCards.length < 8) totalCards.push({ type: 'empty', title: 'Vacío', text: 'Slot disponible' });
+
+            totalCards.forEach((c, i) => {
+                const bg = c.type === 'red' ? 'bg-red-950 border-red-600' : c.type === 'black' ? 'bg-zinc-800 border-zinc-600' : c.type === 'generic' ? 'bg-indigo-950 border-indigo-600' : 'bg-zinc-100 border-dashed border-zinc-400 text-zinc-500';
+                grid.innerHTML += `<div class="card-mini crop-marks rounded p-2 flex flex-col justify-between ${bg} text-white shadow-sm">
+                    <div class="text-[7px] font-bold uppercase truncate">${c.title}</div>
+                    <div class="text-[6px] font-mono-custom text-center">${c.text}</div>
+                    <div class="text-[5px] text-right font-mono">#${i+1}</div>
+                </div>`;
+            });
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
