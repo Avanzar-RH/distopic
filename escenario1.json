@@ -1,0 +1,31 @@
+{
+  "title": "EL ECLIPSE DE CENIZA",
+  "location": "Valle Verde (Silos de Hormigón)",
+  "population": "8.500 Sobrevivientes",
+  "lore": "Tras la erupción en cadena de la cordillera central, el sol quedó totalmente bloqueado por una capa tóxica de ceniza. Las temperaturas cayeron bajo cero, los cultivos colapsaron y el aire exterior es irrespirable sin filtros térmicos.",
+  "dilema": "DILEMA BASE: ¿Cómo gestionarán los recursos vitales de energía y respiración para evitar la inanición antes de que la ceniza sepulte por completo el domo?",
+  "imageSrc": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+  "cards": [
+    {
+      "tag": "CRISIS",
+      "title": "FILTROS EN CRÍTICO",
+      "text": "Una tormenta de ceniza pesada ha saturado los purificadores de aire del Sector Residencial B. El aire tóxico ha comenzado a filtrarse en las viviendas comunales.",
+      "question": "¿Qué sistema de ventilación artesanal o plan de evacuación rápida proponen para salvar a los residentes sin comprometer los sectores limpios?",
+      "imageSrc": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "tag": "DILEMA",
+      "title": "EL DOMO O LAS CALLES",
+      "text": "Las luces ultravioleta no tienen energía suficiente para abastecer la zona urbana y los invernaderos al mismo tiempo durante la noche.",
+      "question": "Deben decidir si apagan la calefacción de las viviendas para salvar las cosechas, o apagan los cultivos para evitar que la gente muera congelada. ¿Qué priorizan?",
+      "imageSrc": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "tag": "EVENTO",
+      "title": "CARAVANA DE SUPERVIVIENTES",
+      "text": "Un convoy golpeado de 200 refugiados del exterior solicita entrar a las instalaciones trayendo consigo suministros médicos valiosos.",
+      "question": "¿Les abren las puertas poniendo a prueba la capacidad del domo o rechazan su ingreso para proteger los víveres actuales?",
+      "imageSrc": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80"
+    }
+  ]
+}
