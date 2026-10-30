@@ -13,14 +13,14 @@
         .font-title { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
         .font-mono-custom { font-family: 'Courier Prime', monospace; }
         
-        /* Borde táctico simulando tarjeta física */
+        /* Borde táctico emulando carta física */
         .card-physical-border {
             border: 1px solid #3f3f46;
             outline: 1px dashed #71717a;
             outline-offset: -5px;
         }
 
-        /* Animación suave para modales tipo Bottom-Sheet */
+        /* Animación suave estilo Bottom-Sheet */
         .bottom-sheet-enter {
             animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -28,6 +28,13 @@
         @keyframes slideUp {
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Estilo para los fondos ambientados de los modales */
+        .modal-bg-image {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
@@ -51,7 +58,7 @@
         </button>
     </header>
 
-    <!-- Estado Vacío (Sin Escenario Cargar) -->
+    <!-- Estado Vacío -->
     <main id="emptyStateView" class="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-4">
         <div class="p-5 bg-zinc-900/80 border border-zinc-800 rounded-2xl flex flex-col items-center space-y-3 max-w-xs shadow-2xl">
             <div class="p-3 bg-zinc-800 text-red-500 rounded-full border border-zinc-700">
@@ -102,7 +109,7 @@
                 <i data-lucide="dices" class="w-5 h-5"></i> Robar Carta Aleatoria
             </button>
 
-            <!-- Carta Robada en Mesa (Limpia, Frontal) -->
+            <!-- Carta Robada en Mesa -->
             <div id="cardDisplayArea" class="hidden bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl relative flex flex-col justify-end min-h-[210px] card-physical-border cursor-pointer" onclick="abrirCartaModal()">
                 <div id="cardArt" class="absolute inset-0 bg-zinc-950 flex items-center justify-center">
                     <p class="text-xs text-zinc-600 font-mono">[ Arte Frontal ]</p>
@@ -135,11 +142,14 @@
 
     </main>
 
-    <!-- TRASERO: ESCENARIO PRINCIPAL (Ficha Completa) -->
+    <!-- TRASERO: ESCENARIO PRINCIPAL (Ficha Completa con Arte de Fondo) -->
     <div id="loreModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex flex-col justify-end p-2 sm:p-4">
         <div onclick="cerrarLoreModal()" class="flex-1"></div>
-        <div class="bottom-sheet-enter bg-zinc-900 border border-zinc-700 card-physical-border rounded-xl p-5 space-y-4 max-w-md mx-auto w-full shadow-2xl relative max-h-[88vh] flex flex-col">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+        <div id="modalLoreContainer" class="bottom-sheet-enter bg-zinc-900 border border-zinc-700 card-physical-border rounded-xl p-5 space-y-4 max-w-md mx-auto w-full shadow-2xl relative max-h-[88vh] flex flex-col modal-bg-image overflow-hidden">
+            <!-- Overlay Oscuro para legibilidad -->
+            <div class="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm z-0"></div>
+
+            <div class="relative z-10 flex justify-between items-center border-b border-zinc-800 pb-2">
                 <span class="text-xs font-bold text-red-500 uppercase font-title tracking-wider flex items-center gap-1.5">
                     <i data-lucide="map-pin" class="w-4 h-4"></i> Tarjeta de Escenario
                 </span>
@@ -148,9 +158,9 @@
                 </button>
             </div>
 
-            <div class="space-y-3 overflow-y-auto flex-1 pr-1 font-mono-custom">
+            <div class="relative z-10 space-y-3 overflow-y-auto flex-1 pr-1 font-mono-custom">
                 <h3 id="modalTitle" class="text-xl font-black font-title text-red-500 uppercase border-b border-zinc-800 pb-1">---</h3>
-                <p id="modalLore" class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line">--</p>
+                <p id="modalLore" class="text-xs text-zinc-200 leading-relaxed whitespace-pre-line">--</p>
 
                 <div id="boxEscenarioDilema" class="pt-2 hidden">
                     <p id="modalEscenarioDilemaText" class="text-xs font-bold text-amber-400 leading-relaxed">--</p>
@@ -168,17 +178,20 @@
                 </div>
             </div>
 
-            <button onclick="cerrarLoreModal()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 rounded-lg text-xs transition-all font-title tracking-wider">
+            <button onclick="cerrarLoreModal()" class="relative z-10 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 rounded-lg text-xs transition-all font-title tracking-wider">
                 Cerrar
             </button>
         </div>
     </div>
 
-    <!-- TRASERO: CARTA ROBADA (CRISIS / DILEMA / EVENTO) -->
+    <!-- TRASERO: CARTA ROBADA (Con Arte de Fondo) -->
     <div id="cardModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex flex-col justify-end p-2 sm:p-4">
         <div onclick="cerrarCartaModal()" class="flex-1"></div>
-        <div class="bottom-sheet-enter bg-zinc-900 border border-zinc-700 card-physical-border rounded-xl p-5 space-y-4 max-w-md mx-auto w-full shadow-2xl relative max-h-[88vh] flex flex-col">
-            <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+        <div id="cardLoreContainer" class="bottom-sheet-enter bg-zinc-900 border border-zinc-700 card-physical-border rounded-xl p-5 space-y-4 max-w-md mx-auto w-full shadow-2xl relative max-h-[88vh] flex flex-col modal-bg-image overflow-hidden">
+            <!-- Overlay Oscuro para legibilidad -->
+            <div class="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm z-0"></div>
+
+            <div class="relative z-10 flex justify-between items-center border-b border-zinc-800 pb-2">
                 <span id="cardModalType" class="text-xs font-bold text-amber-400 uppercase font-title tracking-wider flex items-center gap-1.5">
                     <i data-lucide="alert-circle" class="w-4 h-4"></i> Detalle de Carta
                 </span>
@@ -187,16 +200,16 @@
                 </button>
             </div>
 
-            <div class="space-y-3 overflow-y-auto flex-1 pr-1 font-mono-custom">
+            <div class="relative z-10 space-y-3 overflow-y-auto flex-1 pr-1 font-mono-custom">
                 <h3 id="cardModalTitle" class="text-lg font-bold font-title text-zinc-100 uppercase border-b border-zinc-800 pb-1">---</h3>
-                <p id="cardModalText" class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line">--</p>
+                <p id="cardModalText" class="text-xs text-zinc-200 leading-relaxed whitespace-pre-line">--</p>
 
                 <div id="boxCardQuestion" class="pt-2 hidden">
                     <p id="cardModalQuestion" class="text-xs font-bold text-amber-400 leading-relaxed">--</p>
                 </div>
             </div>
 
-            <button onclick="cerrarCartaModal()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 rounded-lg text-xs transition-all font-title tracking-wider">
+            <button onclick="cerrarCartaModal()" class="relative z-10 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 rounded-lg text-xs transition-all font-title tracking-wider">
                 Cerrar
             </button>
         </div>
@@ -206,14 +219,7 @@
         let currentData = null;
         let activePool = [];
         let currentActiveCard = null;
-
-        // Imágenes por defecto para la ambientación si la carta no incluye una propia
-        const DEFAULT_ART = {
-            CRISIS: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-            DILEMA: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
-            EVENTO: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-            ESCENARIO: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
-        };
+        let mainScenarioImage = "";
 
         async function intentarAutoCarga() {
             try {
@@ -241,7 +247,6 @@
             reader.readAsText(file);
         }
 
-        // Búsqueda flexible de claves en el JSON para evitar 'undefined'
         function buscarCampo(obj, posiblesClaves, porDefecto = '') {
             if (!obj || typeof obj !== 'object') return porDefecto;
             for (let k of Object.keys(obj)) {
@@ -272,12 +277,15 @@
             document.getElementById('gamePlayView').classList.remove('hidden');
             document.getElementById('lblBtnLoad').innerText = "Cambiar";
 
-            // Datos Escenario Principal
+            // Datos del Escenario
             const tituloEscenario = buscarCampo(currentData, ['title', 'titulo', 'nombre'], 'EL ECLIPSE DE CENIZA');
             const loreEscenario = buscarCampo(currentData, ['lore', 'text', 'texto', 'descripcion'], 'Sin lore definido.');
             const ubicacionEscenario = buscarCampo(currentData, ['location', 'ubicacion'], 'Valle Verde');
             const poblacionEscenario = buscarCampo(currentData, ['population', 'poblacion', 'datos'], '8.500 Sobrevivientes');
             const dilemaEscenario = buscarCampo(currentData, ['dilema', 'dilemaprincipal', 'question', 'pregunta'], '');
+
+            // Guardar imagen principal del escenario
+            mainScenarioImage = buscarCampo(currentData, ['imagesrc', 'imagen', 'portada', 'image'], '');
 
             document.getElementById('lblTitle').innerText = tituloEscenario;
             document.getElementById('modalTitle').innerText = tituloEscenario;
@@ -293,9 +301,15 @@
                 boxEscenarioDilema.classList.add('hidden');
             }
 
+            // Aplicar imagen de portada y fondo del modal de lore
             const artBox = document.getElementById('boxArt');
-            const imagenEscenario = buscarCampo(currentData, ['imagesrc', 'imagen', 'portada', 'image'], DEFAULT_ART.ESCENARIO);
-            artBox.innerHTML = `<img src="${imagenEscenario}" class="w-full h-full object-cover">`;
+            if (mainScenarioImage) {
+                artBox.innerHTML = `<img src="${mainScenarioImage}" class="w-full h-full object-cover">`;
+                document.getElementById('modalLoreContainer').style.backgroundImage = `url('${mainScenarioImage}')`;
+            } else {
+                artBox.innerHTML = `<p class="text-xs text-zinc-600 font-mono">[ Sin Portada ]</p>`;
+                document.getElementById('modalLoreContainer').style.backgroundImage = 'none';
+            }
 
             actualizarContadorMazo();
             reiniciarMazo();
@@ -312,76 +326,4 @@
         function cerrarCartaModal() { document.getElementById('cardModal').classList.add('hidden'); }
 
         function actualizarContadorMazo() {
-            let mazoOriginal = buscarCampo(currentData, ['cards', 'tarjetas', 'mazo', 'cartas'], []);
-            if (!Array.isArray(mazoOriginal) || mazoOriginal.length === 0) {
-                mazoOriginal = activePool;
-            }
-            document.getElementById('lblCardsLeft').innerText = `Quedan ${activePool.length}/${mazoOriginal.length}`;
-        }
-
-        function reiniciarMazo() {
-            if (!currentData) return;
-            procesarDatosJSON(currentData);
-            document.getElementById('cardDisplayArea').classList.add('hidden');
-            document.getElementById('cardDisplayPlaceholder').classList.remove('hidden');
-        }
-
-        function robarCartaAleatoria() {
-            if (!activePool || activePool.length === 0) {
-                reiniciarMazo();
-            }
-
-            const randomIndex = Math.floor(Math.random() * activePool.length);
-            currentActiveCard = activePool.splice(randomIndex, 1)[0];
-            actualizarContadorMazo();
-
-            // Etiqueta y color
-            const tag = buscarCampo(currentActiveCard, ['tag', 'type', 'tipo', 'categoria'], 'DILEMA').toUpperCase();
-            const cardBadge = document.getElementById('cardBadge');
-            
-            if (tag.includes('CRISIS')) {
-                cardBadge.className = "bg-red-600/90 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-widest shadow";
-            } else if (tag.includes('EVENTO')) {
-                cardBadge.className = "bg-emerald-600/90 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-widest shadow";
-            } else {
-                cardBadge.className = "bg-blue-600/90 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-widest shadow";
-            }
-
-            cardBadge.innerText = tag;
-
-            // Imagen Frontal limpia
-            const cardArt = document.getElementById('cardArt');
-            const defaultKey = tag.includes('CRISIS') ? 'CRISIS' : tag.includes('EVENTO') ? 'EVENTO' : 'DILEMA';
-            const imgSrc = buscarCampo(currentActiveCard, ['imagesrc', 'imagen', 'portada', 'image'], DEFAULT_ART[defaultKey]);
-            cardArt.innerHTML = `<img src="${imgSrc}" class="w-full h-full object-cover">`;
-
-            // Cargar datos para el reverso modal
-            const tituloCarta = buscarCampo(currentActiveCard, ['title', 'titulo', 'nombre'], 'SIN TÍTULO');
-            const textoCarta = buscarCampo(currentActiveCard, ['text', 'texto', 'descripcion', 'lore'], 'Sin descripción.');
-            const preguntaCarta = buscarCampo(currentActiveCard, ['question', 'pregunta', 'dilema', 'conflicto'], '');
-
-            document.getElementById('cardModalType').innerText = `Detalle de ${tag}`;
-            document.getElementById('cardModalTitle').innerText = tituloCarta;
-            document.getElementById('cardModalText').innerText = textoCarta;
-
-            const boxCardQuestion = document.getElementById('boxCardQuestion');
-            if (preguntaCarta) {
-                document.getElementById('cardModalQuestion').innerText = preguntaCarta;
-                boxCardQuestion.classList.remove('hidden');
-            } else {
-                boxCardQuestion.classList.add('hidden');
-            }
-
-            document.getElementById('cardDisplayPlaceholder').classList.add('hidden');
-            document.getElementById('cardDisplayArea').classList.remove('hidden');
-
-            lucide.createIcons();
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            intentarAutoCarga();
-        });
-    </script>
-</body>
-</html>
+            let mazoOriginal =
